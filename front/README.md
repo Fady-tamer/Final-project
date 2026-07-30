@@ -1,45 +1,10 @@
-# install React
+# install dependencies
 
 ```
 npm i
 ```
-
-# Tailwind
-
-```
-npm i tailwindcss @tailwindcss/vite
-```
-
-### vite.config.ts
+# run project
 
 ```
-import tailwindcss from '@tailwindcss/vite'
-
-plugins: [
-    tailwindcss(),
-  ],
-```
-
-### css
-
-```
-@import "tailwindcss";
-```
-
-# react router
-
-```
-npm i react-router
-```
-
-# formik
-
-```
-npm i formik --save
-```
-
-# yup
-
-```
-npm i yup
+npm run dev
 ```
