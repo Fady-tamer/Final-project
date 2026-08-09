@@ -1,27 +1,37 @@
 import { Link } from "react-router";
 import { FaArrowRight } from "react-icons/fa6";
 
-import heroside2 from "../../../assets/hero-side2.jpg";
+// images
+import heroside from "../../../assets/hero-side2.jpg";
 
 const HeroSideBottom = () => {
   return (
-    <div className="relative overflow-hidden h-[50%] rounded-xl shadow-2xl">
+    <div className="relative overflow-hidden flex rounded-2xl shadow-lg min-h-55">
+      {/* Background Image */}
       <div
-        className="absolute inset-0 -z-10 bg-cover bg-no-repeat blur-[1px]"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url(${heroside2})`,
+          backgroundImage: `url(${heroside})`,
         }}
-      ></div>
-      <div className="relative z-10 h-full p-4 flex flex-col justify-center items-center gap-3">
-        <p className="text-white font-semibold">Best Deal</p>
-        <p className="max-w-70 text-3xl text-center text-white font-bold">
+      />
+
+      {/* Dark Overlay for Readability */}
+      <div className="absolute inset-0 bg-black/40" />
+
+      {/* Content Container */}
+      <div className="grow relative z-10 p-6 md:p-8 flex flex-col justify-center items-center text-center gap-2">
+        <span className="text-xs uppercase tracking-widest text-green-300 font-semibold">
+          Best Deal
+        </span>
+        <h3 className="max-w-xs text-xl md:text-2xl text-white font-bold leading-snug">
           Special Products Deal of the Month
-        </p>
+        </h3>
+
         <Link
-          to={"/shop"}
-          className="w-fit py-4 flex items-center gap-4 font-bold text-green-500"
+          to="/shop"
+          className="w-fit mt-2 flex items-center gap-2 font-bold text-green-400 hover:text-green-300 hover:gap-3 transition-all cursor-pointer"
         >
-          <p>Shop Now</p>
+          <span>Shop Now</span>
           <FaArrowRight />
         </Link>
       </div>

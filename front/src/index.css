@@ -13,9 +13,6 @@
 .active{
     color: #fff;
 }
-
-.active .nav-text{
-    color: #000;
-    font-weight: bold;
-    background: #eee;
+.active .active-nav-text{
+    @apply px-4 py-2 rounded-2xl font-semibold bg-green-500
 }

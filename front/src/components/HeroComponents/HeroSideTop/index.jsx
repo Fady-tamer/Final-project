@@ -1,24 +1,28 @@
 import { Link } from "react-router";
-
-import heroside1 from "../../../assets/hero-side1.jpg";
 import { FaArrowRight } from "react-icons/fa6";
+
+// images
+import heroside from "../../../assets/hero-side1.jpg";
 
 const HeroSideTop = () => {
   return (
     <div
-      className="h-[50%] p-4 flex flex-col gap-3 bg-cover bg-no-repeat rounded-xl shadow-2xl"
+      className="flex-1 p-6 md:p-8 flex flex-col justify-center gap-2 bg-cover bg-center bg-no-repeat rounded-2xl shadow-lg min-h-55 relative overflow-hidden"
       style={{
-        backgroundImage: `url(${heroside1})`,
+        backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.85), rgba(255,255,255,0.2)), url(${heroside})`,
       }}
     >
-      <p className="font-semibold">Summer Sale</p>
-      <p className="text-3xl font-semibold">75% OFF</p>
-      <p className="text-sm font-thin">Only Fruit & Vegetable</p>
+      <span className="font-semibold text-xs uppercase tracking-wider text-gray-700">
+        Summer Sale
+      </span>
+      <h3 className="text-3xl font-bold text-gray-900">75% OFF</h3>
+      <p className="text-sm text-gray-600">Only Fruit & Vegetable</p>
+
       <Link
-        to={"/shop"}
-        className="w-fit py-4 flex items-center gap-4 font-bold text-green-500"
+        to="/shop"
+        className="w-fit mt-2 flex items-center gap-2 font-bold text-green-600 hover:text-green-700 hover:gap-3 transition-all cursor-pointer"
       >
-        <p>Shop Now</p>
+        <span>Shop Now</span>
         <FaArrowRight />
       </Link>
     </div>

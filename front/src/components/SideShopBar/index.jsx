@@ -1,49 +1,57 @@
-import React, { useState, useEffect } from "react";
-import Loading from "../Loading";
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
-const ShopSideBar = ({ setSelectedCategory }) => {
-  const baseUrl = "http://localhost:1337/api/";
-  const endPoint = "categories";
+// context
+import { mainStore } from "../../context/MainContext";
 
-  const [categories, setCategories] = useState([]);
+const ShopSideBar = () => {
+  const { categories, selectedCategory, setSelectedCategory } =
+    useContext(mainStore);
+
+  const activeCategory = selectedCategory || "all";
+
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const promise = await fetch(baseUrl + endPoint);
-      const data = await promise.json();
-      setCategories(data.data);
-      setIsLoading(false);
-    };
-
-    fetchCategories();
-  }, []);
-
   return (
-    <div className="min-w-50 p-4 rounded-2xl bg-gray-200 flex flex-col gap-2">
-      <h3 className="font-bold text-lg mb-4 border-b border-gray-300 pb-2">
+    <aside className="w-full md:w-56 p-4 rounded-2xl bg-white border border-gray-100 shadow-sm flex flex-col gap-1.5 h-fit shrink-0">
+      <h3 className="font-bold text-lg mb-2 border-b border-gray-200 pb-2 text-gray-800">
         Categories
       </h3>
+
+      {/* "All Products" Button */}
       <button
-        onClick={() => setSelectedCategory("all")}
-        className="text-left text-gray-700 hover:text-green-500 transition-all cursor-pointer"
+        type="button"
+        onClick={() => setSelectedCategory && setSelectedCategory("all")}
+        className={`text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+          activeCategory === "all" || !activeCategory
+            ? "bg-green-500 text-white font-bold shadow-sm"
+            : "text-gray-700 hover:bg-gray-100 hover:text-green-600"
+        }`}
       >
         All Products
       </button>
-      {isLoading ? (
-        <Loading />
-      ) : (
-        categories.map(({ documentId, name }) => (
+
+      {/* Category List */}
+      {categories.map(({ documentId, id, name }) => {
+        const isActive = activeCategory.toLowerCase() === name.toLowerCase();
+
+        return (
           <button
-            key={documentId}
-            onClick={() => setSelectedCategory(name)}
-            className="text-left text-gray-700 hover:text-green-500 cursor-pointer"
+            key={documentId || id || name}
+            type="button"
+            onClick={() => setSelectedCategory && setSelectedCategory(name)}
+            className={`text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer capitalize ${
+              isActive
+                ? "bg-green-500 text-white font-bold shadow-sm"
+                : "text-gray-700 hover:bg-gray-100 hover:text-green-600"
+            }`}
           >
             {name}
           </button>
-        ))
-      )}
-    </div>
+        );
+      })}
+    </aside>
   );
 };
 

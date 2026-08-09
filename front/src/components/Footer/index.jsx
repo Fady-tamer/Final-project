@@ -1,12 +1,34 @@
-import { NavLink } from "react-router";
+import { useContext } from "react";
+import { NavLink, Link } from "react-router";
+
+// icons
+import {
+  FaFacebookF,
+  FaTwitter,
+  FaPinterestP,
+  FaInstagram,
+} from "react-icons/fa";
+
+// components
+import { mainStore } from "../../context/MainContext";
 
 const Footer = () => {
+  const { setSelectedCategory } = useContext(mainStore);
+
+  const handleCategoryClick = (categoryName) => {
+    if (setSelectedCategory) {
+      setSelectedCategory(categoryName);
+    }
+  };
+
   return (
-    <div className="py-14 bg-[#191919]">
-      <div className="container">
-        <div className="flex gap-28">
-          <div className="w-3/12 flex flex-col gap-4">
-            <NavLink to={"/"} className="logo flex items-center gap-2">
+    <footer className="bg-[#191919] text-white pt-16 pb-8">
+      <div className="container mx-auto px-4">
+        {/* Main Footer Links Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 pb-12 border-b border-gray-800">
+          {/* Brand & Contact Info */}
+          <div className="lg:col-span-2 flex flex-col gap-4 pr-4">
+            <NavLink to="/" className="flex items-center gap-2">
               <svg
                 width="32"
                 height="30"
@@ -19,71 +41,156 @@ const Footer = () => {
                   fill="#00B307"
                 />
               </svg>
-              <p className="text-2xl font-bold text-white">Ecobazar</p>
+              <span className="text-2xl font-bold">Ecobazar</span>
             </NavLink>
-            <p className="text-white">
+            <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
               Morbi cursus porttitor enim lobortis molestie. Duis gravida turpis
               dui, eget bibendum magna congue nec.
             </p>
-            <div className="flex gap-3">
-              <p className="text-white underline underline-offset-8 decoration-green-600">
-                +20xxxxxxxxxx
-              </p>
-              <p className="text-gray-400">or</p>
-              <p className="text-white underline underline-offset-8 decoration-green-600">
-                test@gmail.com
-              </p>
+            <div className="flex flex-wrap items-center gap-3 text-sm pt-2">
+              <a
+                href="tel:+201234567890"
+                className="text-white hover:text-green-500 transition-colors underline underline-offset-8 decoration-green-600 font-semibold"
+              >
+                +20 123 456 7890
+              </a>
+              <span className="text-gray-500">or</span>
+              <a
+                href="mailto:support@ecobazar.com"
+                className="text-white hover:text-green-500 transition-colors underline underline-offset-8 decoration-green-600 font-semibold"
+              >
+                support@ecobazar.com
+              </a>
             </div>
           </div>
-          <div className="flex flex-col gap-4">
-            <p className="text-white text-xl font-bold">My Account</p>
-            <NavLink to={"/shoppinCart"} className={`text-gray-400 font-thin`}>
+
+          {/* Column 1: My Account */}
+          <div className="flex flex-col gap-3">
+            <p className="text-lg font-bold text-white mb-2">My Account</p>
+            <NavLink
+              to="/shoppingCart"
+              className="text-gray-400 hover:text-green-500 text-sm transition-colors"
+            >
               Shopping Cart
             </NavLink>
-            <NavLink to={"/Wishlist"} className={`text-gray-400 font-thin`}>
+            <NavLink
+              to="/wishlist"
+              className="text-gray-400 hover:text-green-500 text-sm transition-colors"
+            >
               Wishlist
             </NavLink>
           </div>
-          <div className="flex flex-col gap-4">
-            <p className="text-white text-xl font-bold">Proxy</p>
-            <NavLink to={"/"} className={`text-gray-400 font-thin`}>
+
+          {/* Column 2: Quick Links */}
+          <div className="flex flex-col gap-3">
+            <p className="text-lg font-bold text-white mb-2">Navigation</p>
+            <NavLink
+              to="/"
+              className="text-gray-400 hover:text-green-500 text-sm transition-colors"
+            >
               Home
             </NavLink>
-            <NavLink to={"/shop"} className={`text-gray-400 font-thin`}>
+            <NavLink
+              to="/shop"
+              className="text-gray-400 hover:text-green-500 text-sm transition-colors"
+            >
               Shop
             </NavLink>
-            <NavLink to={"/aboutUs"} className={`text-gray-400 font-thin`}>
+            <NavLink
+              to="/aboutUs"
+              className="text-gray-400 hover:text-green-500 text-sm transition-colors"
+            >
               About Us
             </NavLink>
-            <NavLink to={"/contactUs"} className={`text-gray-400 font-thin`}>
+            <NavLink
+              to="/contactUs"
+              className="text-gray-400 hover:text-green-500 text-sm transition-colors"
+            >
               Contact Us
             </NavLink>
           </div>
-          <div className="flex flex-col gap-4">
-            <p className="text-white text-xl font-bold">Categories</p>
-            <NavLink
-              to={"/fruit&vegetables"}
-              className={`text-gray-400 font-thin`}
+
+          {/* Column 3: Categories */}
+          <div className="flex flex-col gap-3">
+            <p className="text-lg font-bold text-white mb-2">Categories</p>
+            <Link
+              to="/shop"
+              onClick={() => handleCategoryClick("Fresh Fruit")}
+              className="text-gray-400 hover:text-green-500 text-sm transition-colors"
             >
-              Fruit & Vegetables
-            </NavLink>
-            <NavLink to={"/meat&fish"} className={`text-gray-400 font-thin`}>
+              Fresh Fruit
+            </Link>
+            <Link
+              to="/shop"
+              onClick={() => handleCategoryClick("Fresh Vegetables")}
+              className="text-gray-400 hover:text-green-500 text-sm transition-colors"
+            >
+              Fresh Vegetables
+            </Link>
+            <Link
+              to="/shop"
+              onClick={() => handleCategoryClick("Beverages")}
+              className="text-gray-400 hover:text-green-500 text-sm transition-colors"
+            >
+              Beverages
+            </Link>
+            <Link
+              to="/shop"
+              onClick={() => handleCategoryClick("Meat & Fish")}
+              className="text-gray-400 hover:text-green-500 text-sm transition-colors"
+            >
               Meat & Fish
-            </NavLink>
-            <NavLink to={"/bread&bakery"} className={`text-gray-400 font-thin`}>
+            </Link>
+            <Link
+              to="/shop"
+              onClick={() => handleCategoryClick("Bread & Bakery")}
+              className="text-gray-400 hover:text-green-500 text-sm transition-colors"
+            >
               Bread & Bakery
-            </NavLink>
-            <NavLink
-              to={"/beauty&health"}
-              className={`text-gray-400 font-thin`}
+            </Link>
+            <Link
+              to="/shop"
+              onClick={() => handleCategoryClick("Beauty & Health")}
+              className="text-gray-400 hover:text-green-500 text-sm transition-colors"
             >
               Beauty & Health
-            </NavLink>
+            </Link>
           </div>
         </div>
-        <div></div>
+
+        {/* Bottom Bar: Copyright & Socials */}
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+          <p>© Ecobazar eCommerce. All Rights Reserved</p>
+
+          <div className="flex items-center gap-3 text-lg">
+            <a
+              href="#"
+              className="w-9 h-9 rounded-full bg-gray-800 hover:bg-green-500 hover:text-white flex items-center justify-center transition-all"
+            >
+              <FaFacebookF className="text-sm" />
+            </a>
+            <a
+              href="#"
+              className="w-9 h-9 rounded-full bg-gray-800 hover:bg-green-500 hover:text-white flex items-center justify-center transition-all"
+            >
+              <FaTwitter className="text-sm" />
+            </a>
+            <a
+              href="#"
+              className="w-9 h-9 rounded-full bg-gray-800 hover:bg-green-500 hover:text-white flex items-center justify-center transition-all"
+            >
+              <FaPinterestP className="text-sm" />
+            </a>
+            <a
+              href="#"
+              className="w-9 h-9 rounded-full bg-gray-800 hover:bg-green-500 hover:text-white flex items-center justify-center transition-all"
+            >
+              <FaInstagram className="text-sm" />
+            </a>
+          </div>
+        </div>
       </div>
-    </div>
+    </footer>
   );
 };
 
