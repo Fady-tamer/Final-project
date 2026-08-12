@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { data, Link, useNavigate } from "react-router";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -12,7 +12,7 @@ import { validation } from "./validation";
 import { mainStore } from "../../../context/MainContext";
 
 const Register = () => {
-  const { BASE_URL } = useContext(mainStore);
+  const { BASE_URL, cartEndPoint, wishListEndPoint } = useContext(mainStore);
   const endPoint = "/api/auth/local/register";
 
   const navigateTo = useNavigate();
@@ -22,9 +22,35 @@ const Register = () => {
     setIsHidden(!isHidden);
   };
 
+  const createNewCart = async (user_id) => {
+    const newCart = {
+      data: {
+        items: [],
+        user_id: user_id,
+      },
+    };
+
+    await axios.post(`${BASE_URL}${cartEndPoint}`, newCart);
+  };
+
+  const createNewWishList = async (user_id) => {
+    const newWishList = {
+      data: {
+        items: [],
+        user_id: user_id,
+      },
+    };
+
+    await axios.post(`${BASE_URL}${wishListEndPoint}`, newWishList);
+  };
+
   const submitHandler = async (values) => {
     try {
-      await axios.post(`${BASE_URL}${endPoint}`, values);
+      const res = await axios.post(`${BASE_URL}${endPoint}`, values);
+      const user_id = await res.data.user.id;
+
+      createNewCart(user_id);
+      createNewWishList(user_id);
 
       toast.success("Account created successfully!", {
         duration: 2000,
@@ -40,8 +66,6 @@ const Register = () => {
         "An unexpected error occurred.";
 
       toast.error(errorMessage);
-    } finally {
-      setSubmitting(false);
     }
   };
 

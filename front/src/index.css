@@ -6,6 +6,15 @@
     font-family: "Poppins", sans-serif;
 }
 
+::-webkit-scrollbar{
+    width: 10px;
+    color: transparent;
+}
+::-webkit-scrollbar-thumb{
+    border-radius: 50px;
+    background-color: oklch(72.3% 0.219 149.579);
+}
+
 .container{
     @apply mx-auto
 }

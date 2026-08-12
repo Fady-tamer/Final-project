@@ -10,12 +10,14 @@ import { HiMenu, HiX } from "react-icons/hi";
 import { mainStore } from "../../context/MainContext";
 
 const Navbar = () => {
-  const { token, logoutFn } = useContext(mainStore);
+  const { token, logoutFn, cart } = useContext(mainStore);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handelMobileMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  const cartCounter = cart.length;
 
   return (
     <header className="bg-white border-b border-gray-100 sticky top-0 z-40 w-full">
@@ -109,7 +111,7 @@ const Navbar = () => {
                 aria-label="Shopping Cart"
               >
                 <PiShoppingCartSimple className="text-2xl" />
-                {<span className="p-1 font-bold">{0}</span>}
+                {<span className="p-1 font-bold">{cartCounter}</span>}
               </Link>
 
               <button

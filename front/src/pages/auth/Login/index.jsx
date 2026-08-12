@@ -12,16 +12,56 @@ import { validation } from "./validation";
 import { mainStore } from "../../../context/MainContext";
 
 const Login = () => {
-  const { BASE_URL, saveToken, setCurrentCart } = useContext(mainStore);
+  const {
+    BASE_URL,
+    cartEndPoint,
+    wishListEndPoint,
+    saveToken,
+    setCart,
+    saveUserId,
+    saveCartId,
+    saveCartItems,
+    saveWishListId,
+    saveWishListItems,
+  } = useContext(mainStore);
 
   const endPoint = "/api/auth/local";
-  const cartEndPoint = "/api/carts";
 
   const navigateTo = useNavigate();
   const [isHidden, setIsHidden] = useState(true);
 
   const toggelHidden = () => {
     setIsHidden(!isHidden);
+  };
+
+  const fetchCart = async (jwt, user_id) => {
+    const res = await axios.get(
+      `${BASE_URL}${cartEndPoint}?filters[user_id][$eq]=${user_id}`,
+      {
+        headers: { Authorization: `bearer ${jwt}` },
+      },
+    );
+
+    const cartId = res.data.data[0].documentId;
+    const data = res.data.data[0].items;
+
+    saveCartId(cartId);
+    saveCartItems(data);
+  };
+
+  const fetchWishList = async (jwt, user_id) => {
+    const res = await axios.get(
+      `${BASE_URL}${wishListEndPoint}?filters[user_id][$eq]=${user_id}`,
+      {
+        headers: { Authorization: `bearer ${jwt}` },
+      },
+    );
+
+    const wishListId = res.data.data[0].documentId;
+    const data = res.data.data[0].items;
+
+    saveWishListId(wishListId);
+    saveWishListItems(data);
   };
 
   const submitHandler = async (values) => {
@@ -32,7 +72,11 @@ const Login = () => {
 
       if (jwt) {
         saveToken(jwt);
+        saveUserId(userId);
       }
+
+      fetchCart(jwt, userId);
+      fetchWishList(jwt, userId);
 
       toast.success("Login successful!", { duration: 2000 });
       navigateTo("/");

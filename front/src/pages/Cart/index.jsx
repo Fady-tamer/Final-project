@@ -1,7 +1,8 @@
 import React, { useContext } from "react";
+
+// components
 import CartTable from "../../components/CartTable";
 import Checkout from "../../components/Checkout";
-import { mainStore } from "../../context/MainContext";
 
 const Cart = () => {
   return (

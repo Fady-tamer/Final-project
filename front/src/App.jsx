@@ -14,6 +14,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import ErrorPage from "./pages/Error";
 import Cart from "./pages/Cart";
+import Wishlist from "./pages/Wishlist";
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
             <Route path="register" element={<Register />} />
 
             <Route path="shop" element={<Shop />} />
+            <Route path="wishlist" element={<Wishlist />} />
             <Route path="shoppingCart" element={<Cart />} />
 
             <Route path="*" element={<ErrorPage />} />
