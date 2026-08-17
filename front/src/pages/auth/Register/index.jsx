@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { data, Link, useNavigate } from "react-router";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import toast from "react-hot-toast";
@@ -7,12 +7,15 @@ import axios from "axios";
 // icons
 import { FaEye, FaRegEyeSlash } from "react-icons/fa";
 
-// validation & context
+// validation
 import { validation } from "./validation";
+
+// context
 import { mainStore } from "../../../context/MainContext";
 
 const Register = () => {
-  const { BASE_URL, cartEndPoint, wishListEndPoint } = useContext(mainStore);
+  const { BASE_URL, cartEndPoint, wishListEndPoint, token } =
+    useContext(mainStore);
   const endPoint = "/api/auth/local/register";
 
   const navigateTo = useNavigate();
@@ -59,18 +62,20 @@ const Register = () => {
       setTimeout(() => {
         navigateTo("/login");
       }, 1500);
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.message ||
-        error.message ||
-        "An unexpected error occurred.";
-
+    } catch {
+      const errorMessage = "An error occurred";
       toast.error(errorMessage);
     }
   };
 
+  useEffect(() => {
+    if (token) {
+      return navigateTo("/");
+    }
+  });
+
   return (
-    <div className="grow py-12 flex flex-col justify-center items-center px-4">
+    <div className="grow min-h-[71dvh] flex flex-col justify-center items-center px-4">
       <div className="w-full max-w-md">
         <Formik
           initialValues={{ username: "", email: "", password: "" }}
@@ -148,7 +153,7 @@ const Register = () => {
               <span>Already have an account?</span>
               <span>|</span>
               <Link
-                to="/login"
+                to="/auth/login"
                 className="text-green-600 hover:underline font-semibold"
               >
                 Login

@@ -1,4 +1,6 @@
 import { Link } from "react-router";
+
+// icons
 import { FaArrowRight } from "react-icons/fa6";
 
 // images
@@ -7,12 +9,12 @@ import heroMain from "../../../assets/hero-main.jpg";
 const HeroMain = () => {
   return (
     <div
-      className="w-full h-full p-8 md:p-12 lg:p-16 flex flex-col justify-center gap-6 rounded-2xl bg-cover bg-top bg-no-repeat shadow-xl relative overflow-hidden min-h-95 lg:min-h-125"
+      className="w-full h-full p-8 md:p-12 lg:p-16 flex flex-col justify-center items-center md:items-start gap-6 rounded-2xl bg-cover bg-top bg-no-repeat shadow-xl relative overflow-hidden min-h-95 lg:min-h-125"
       style={{
         backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.55), rgba(0,0,0,0.1)), url(${heroMain})`,
       }}
     >
-      <h1 className="max-w-md text-3xl md:text-5xl text-white font-bold leading-tight">
+      <h1 className="max-w-md text-2xl md:text-5xl text-center md:text-start text-white font-bold leading-tight">
         Fresh & Healthy Organic Food
       </h1>
 

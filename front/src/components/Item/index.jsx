@@ -1,11 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 // components
-import ItemModel from "../ItemModel";
-import { mainStore } from "../../context/MainContext";
-import axios from "axios";
+import ItemModel from "../Models/ItemModel";
+
+// icons
 import { FaHeart, FaRegHeart } from "react-icons/fa";
+
+// context
+import { mainStore } from "../../context/MainContext";
 
 const Item = ({
   id,
@@ -31,32 +35,43 @@ const Item = ({
   } = useContext(mainStore);
 
   useEffect(() => {
-    const inWishlist = wishList.some((item) => item.id === id);
-    setIsWish(inWishlist);
+    if (wishList) {
+      setIsWish(wishList.some((item) => item.id === id));
+    }
   }, [wishList, id]);
 
   const handleAddToCart = async (e) => {
     e.stopPropagation();
 
-    const existIndex = cart.findIndex((item) => item.id === id);
-
-    let updatedCart;
-    if (existIndex !== -1) {
-      updatedCart = [...cart];
-      updatedCart[existIndex] = {
-        ...updatedCart[existIndex],
-        quantity: updatedCart[existIndex].quantity + 1,
-      };
-    } else {
-      const product = { id, imgUrl, name, price, category_name, quantity: 1 };
-      updatedCart = [...cart, product];
-    }
-
-    const cartId = localStorage.getItem("cartId");
-
-    saveCartItems(updatedCart);
-
     try {
+      const existIndex = cart.findIndex((item) => item.id === id);
+
+      let updatedCart;
+
+      if (existIndex !== -1) {
+        updatedCart = [...cart];
+        updatedCart[existIndex] = {
+          ...updatedCart[existIndex],
+          quantity: updatedCart[existIndex].quantity + 1,
+        };
+      } else {
+        const product = {
+          id,
+          imgUrl,
+          name,
+          description,
+          price,
+          category_name,
+          quantity: 1,
+          stock,
+        };
+        updatedCart = [...cart, product];
+      }
+
+      const cartId = localStorage.getItem("cartId");
+
+      saveCartItems(updatedCart);
+
       await axios.put(
         `${BASE_URL}${cartEndPoint}/${cartId}`,
         { data: { items: updatedCart } },
@@ -68,35 +83,60 @@ const Item = ({
     }
   };
 
-  const handleToggleWishList = async (e) => {
+  const handleAddToWishList = async (e) => {
     e.stopPropagation();
 
     const wishListId = localStorage.getItem("wishListId");
 
-    let updatedWishList;
-    if (isWish) {
-      updatedWishList = wishList.filter((item) => item.id !== id);
-    } else {
-      const product = { id, imgUrl, name, price, category_name };
-      updatedWishList = [...wishList, product];
-    }
-
-    saveWishListItems(updatedWishList);
-
     try {
+      let updatedWishList;
+
+      const product = {
+        id,
+        imgUrl,
+        name,
+        description,
+        price,
+        category_name,
+        stock,
+      };
+      updatedWishList = [...wishList, product];
+
+      saveWishListItems(updatedWishList);
+
       await axios.put(
         `${BASE_URL}${wishListEndPoint}/${wishListId}`,
         { data: { items: updatedWishList } },
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
-      toast.success(
-        isWish
-          ? `${name} removed from wishlist!`
-          : `${name} added to wishlist!`,
-      );
+      setIsWish(!isWish);
+      toast.success(`${name} added to wishlist!`);
     } catch (error) {
-      toast.error("Failed to update wishlist");
+      toast.error("Failed to add to wishlist");
+    }
+  };
+
+  const handleRemoveFromWishList = async (e) => {
+    e.stopPropagation();
+
+    const wishListId = localStorage.getItem("wishListId");
+
+    try {
+      let updatedWishList;
+
+      updatedWishList = wishList.filter((item) => item.id !== id);
+
+      saveWishListItems(updatedWishList);
+      await axios.put(
+        `${BASE_URL}${wishListEndPoint}/${wishListId}`,
+        { data: { items: updatedWishList } },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      toast.success(`${name} removed from wishlist!`);
+    } catch (error) {
+      toast.error("Failed to remove from wishlist");
     }
   };
 
@@ -148,7 +188,7 @@ const Item = ({
             {/* Wishlist Button */}
             <button
               type="button"
-              onClick={handleToggleWishList}
+              onClick={isWish ? handleRemoveFromWishList : handleAddToWishList}
               className="p-2.5 rounded-full text-green-700 bg-green-100 hover:bg-green-200 transition-colors cursor-pointer shrink-0"
               aria-label="Toggle Wishlist"
             >

@@ -6,13 +6,18 @@ export const mainStore = createContext();
 
 const MainContext = ({ children }) => {
   const BASE_URL = "http://localhost:1337";
+
+  // end points
   const categoriesEndPoint = "/api/categories";
   const productsEndPoint = "/api/products";
   const cartEndPoint = "/api/carts";
   const wishListEndPoint = "/api/wishlists";
 
+  // user data
   const [token, setToken] = useState(localStorage.getItem("token") || null);
-  const [userId, setUserId] = useState(localStorage.getItem("userId") || null);
+  const [userData, setUserData] = useState(
+    JSON.parse(localStorage.getItem("userData")) || null,
+  );
   const [cartId, setCartId] = useState(localStorage.getItem("cartId") || null);
   const [wishListId, setWishListId] = useState(
     localStorage.getItem("wishListId") || null,
@@ -26,16 +31,9 @@ const MainContext = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [quantity, setQuantity] = useState(1);
 
   // Flags
-  const [isInitialLoading, setIsInitialLoading] = useState(false);
-
-  useEffect(() => {
-    if (token) {
-      setIsInitialLoading(true);
-    }
-  }, [token]);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   // Load Categories and Products
   useEffect(() => {
@@ -44,14 +42,10 @@ const MainContext = ({ children }) => {
         const catRes = await axios.get(`${BASE_URL}${categoriesEndPoint}`);
         setCategories(catRes.data?.data || []);
 
-        if (token) {
-          const prodRes = await axios.get(`${BASE_URL}${productsEndPoint}`);
-          setProducts(prodRes.data?.data || []);
-        }
+        const prodRes = await axios.get(`${BASE_URL}${productsEndPoint}`);
+        setProducts(prodRes.data?.data || []);
       } catch (error) {
         toast.error("Failed to preload initial data.");
-      } finally {
-        setTimeout(() => setIsInitialLoading(false), 2000);
       }
     };
 
@@ -68,9 +62,9 @@ const MainContext = ({ children }) => {
     setToken(jwt);
   };
 
-  const saveUserId = (userId) => {
-    localStorage.setItem("userId", userId);
-    setUserId(userId);
+  const saveUserData = (userData) => {
+    localStorage.setItem("userData", JSON.stringify(userData));
+    setUserData(userData);
   };
 
   const saveCartId = (cartId) => {
@@ -78,33 +72,28 @@ const MainContext = ({ children }) => {
     setCartId(cartId);
   };
 
-  const saveCartItems = (cartItems) => {
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
-    setCart(cartItems);
-  };
-
   const saveWishListId = (wishListId) => {
     localStorage.setItem("wishListId", wishListId);
     setWishListId(wishListId);
   };
 
-  const saveWishListItems = (WishListItems) => {
-    localStorage.setItem("WishListItems", JSON.stringify(WishListItems));
-    setWishList(WishListItems);
+  const saveCartItems = (cartItems) => {
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    setCart(cartItems);
   };
 
-  const incQuantity = () => {
-    setQuantity(quantity + 1);
-  };
-  const decQuantity = () => {
-    setQuantity(quantity - 1);
+  const saveWishListItems = (WishListItems) => {
+    localStorage.setItem("wishListItems", JSON.stringify(WishListItems));
+    setWishList(WishListItems);
   };
 
   const logoutFn = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("userId");
+    localStorage.removeItem("userData");
     localStorage.removeItem("cartId");
+    localStorage.removeItem("wishListId");
     localStorage.removeItem("cartItems");
+    localStorage.removeItem("wishListItems");
     setToken(null);
   };
 
@@ -115,27 +104,23 @@ const MainContext = ({ children }) => {
     cartEndPoint,
     wishListEndPoint,
     token,
-    userId,
+    userData,
     cartId,
     wishListId,
     selectedCategory,
-    quantity,
     categories,
     filteredProducts,
     isInitialLoading,
     cart,
     wishList,
     setSelectedCategory,
-    setQuantity,
     setIsInitialLoading,
     saveToken,
-    saveUserId,
+    saveUserData,
     saveCartId,
     saveWishListId,
     saveCartItems,
     saveWishListItems,
-    incQuantity,
-    decQuantity,
     logoutFn,
   };
 

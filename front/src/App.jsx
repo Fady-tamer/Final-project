@@ -4,17 +4,20 @@ import { Toaster } from "react-hot-toast";
 
 // layouts
 import MainLayout from "./layouts/mainLayout";
+import AuthLayout from "./layouts/AuthLayout";
 
 // components
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
+import Profile from "./pages/Profile";
+import Cart from "./pages/Cart";
+import Wishlist from "./pages/Wishlist";
+import ErrorPage from "./pages/Error";
 
 // auth
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
-import ErrorPage from "./pages/Error";
-import Cart from "./pages/Cart";
-import Wishlist from "./pages/Wishlist";
+import Checkout from "./pages/Checkout";
 
 const App = () => {
   return (
@@ -24,14 +27,20 @@ const App = () => {
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Home />} />
 
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
-
-            <Route path="shop" element={<Shop />} />
+            <Route path="profile" element={<Profile />} />
             <Route path="wishlist" element={<Wishlist />} />
             <Route path="shoppingCart" element={<Cart />} />
 
+            <Route path="checkout" element={<Checkout />} />
+
+            <Route path="shop" element={<Shop />} />
+
             <Route path="*" element={<ErrorPage />} />
+          </Route>
+
+          <Route path="auth" element={<AuthLayout />}>
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
           </Route>
         </Routes>
       </BrowserRouter>

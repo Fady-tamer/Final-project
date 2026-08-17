@@ -1,8 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { FaRegHeart, FaHeart } from "react-icons/fa";
-import { mainStore } from "../../context/MainContext";
 import toast from "react-hot-toast";
 import axios from "axios";
+
+// icons
+import { FaRegHeart, FaHeart } from "react-icons/fa";
+
+// context
+import { mainStore } from "../../../context/MainContext";
 
 const ItemModel = ({
   id,
@@ -25,13 +29,9 @@ const ItemModel = ({
     saveWishListItems,
   } = useContext(mainStore);
 
-  const fallbackImg = "https://via.placeholder.com/400?text=No+Image";
-
-  // Use local state for quantity to avoid polluting global context
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [isWish, setIsWish] = useState(false);
 
-  // Sync initial quantity and wishlist state
   useEffect(() => {
     const existingCartItem = cart.find((item) => item.id === id);
     if (existingCartItem) {
@@ -41,49 +41,36 @@ const ItemModel = ({
     }
 
     const inWishlist = wishList?.some((item) => item.id === id);
-    setIsWish(Boolean(inWishlist));
+    setIsWish(inWishlist);
   }, [cart, wishList, id]);
 
-  const handleInc = () => {
-    if (selectedQuantity < stock) {
-      setSelectedQuantity((prev) => prev + 1);
-    }
-  };
-
-  const handleDec = () => {
-    if (selectedQuantity > 1) {
-      setSelectedQuantity((prev) => prev - 1);
-    }
-  };
-
   const handleAddToCart = async () => {
-    const existIndex = cart.findIndex((item) => item.id === id);
-    let updatedCart = [...cart];
-
-    if (existIndex !== -1) {
-      // Set or update the quantity accurately
-      updatedCart[existIndex] = {
-        ...updatedCart[existIndex],
-        quantity: selectedQuantity,
-      };
-    } else {
-      const product = {
-        id,
-        imgUrl,
-        name,
-        price,
-        category_name,
-        quantity: selectedQuantity,
-      };
-      updatedCart.push(product);
-    }
-
-    const cartId = localStorage.getItem("cartId");
-
-    // Optimistic Update
-    saveCartItems(updatedCart);
-
     try {
+      const existIndex = cart.findIndex((item) => item.id === id);
+
+      let updatedCart = [...cart];
+
+      if (existIndex !== -1) {
+        updatedCart[existIndex] = {
+          ...updatedCart[existIndex],
+          quantity: selectedQuantity,
+        };
+      } else {
+        const product = {
+          id,
+          imgUrl,
+          name,
+          price,
+          category_name,
+          quantity: selectedQuantity,
+        };
+        updatedCart.push(product);
+      }
+
+      const cartId = localStorage.getItem("cartId");
+
+      saveCartItems(updatedCart);
+
       await axios.put(
         `${BASE_URL}${cartEndPoint}/${cartId}`,
         { data: { items: updatedCart } },
@@ -96,34 +83,68 @@ const ItemModel = ({
     }
   };
 
-  const handleToggleWishList = async () => {
+  const handleAddToWishList = async (e) => {
+    e.stopPropagation();
+
     const wishListId = localStorage.getItem("wishListId");
-    let updatedWishList;
-
-    if (isWish) {
-      updatedWishList = wishList.filter((item) => item.id !== id);
-    } else {
-      const product = { id, imgUrl, name, price, category_name };
-      updatedWishList = [...wishList, product];
-    }
-
-    saveWishListItems(updatedWishList);
 
     try {
+      let updatedWishList;
+
+      const product = {
+        id,
+        imgUrl,
+        name,
+        description,
+        price,
+        category_name,
+        stock,
+      };
+      updatedWishList = [...wishList, product];
+
+      saveWishListItems(updatedWishList);
+
       await axios.put(
         `${BASE_URL}${wishListEndPoint}/${wishListId}`,
         { data: { items: updatedWishList } },
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
-      toast.success(
-        isWish
-          ? `${name} removed from wishlist!`
-          : `${name} added to wishlist!`,
-      );
+      setIsWish(!isWish);
+      toast.success(`${name} added to wishlist!`);
     } catch (error) {
-      toast.error("Failed to update wishlist");
+      toast.error("Failed to add to wishlist");
     }
+  };
+
+  const handleRemoveFromWishList = async (e) => {
+    e.stopPropagation();
+
+    const wishListId = localStorage.getItem("wishListId");
+
+    try {
+      let updatedWishList;
+
+      updatedWishList = wishList.filter((item) => item.id !== id);
+
+      saveWishListItems(updatedWishList);
+      await axios.put(
+        `${BASE_URL}${wishListEndPoint}/${wishListId}`,
+        { data: { items: updatedWishList } },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      toast.success(`${name} removed from wishlist!`);
+    } catch (error) {
+      toast.error("Failed to remove from wishlist");
+    }
+  };
+
+  const incQuantity = () => {
+    setSelectedQuantity(selectedQuantity + 1);
+  };
+  const decQuantity = () => {
+    setSelectedQuantity(selectedQuantity - 1);
   };
 
   return (
@@ -148,12 +169,8 @@ const ItemModel = ({
         {/* Product Image */}
         <div className="w-full md:w-1/2 max-h-96 rounded-2xl overflow-hidden bg-gray-100 shrink-0">
           <img
-            src={imgUrl || fallbackImg}
+            src={imgUrl}
             alt={name}
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = fallbackImg;
-            }}
             className="w-full h-full object-cover object-center"
           />
         </div>
@@ -173,7 +190,7 @@ const ItemModel = ({
                       : "text-red-800 bg-red-100"
                   }`}
                 >
-                  {stock > 0 ? `${stock} in stock` : "Out of stock"}
+                  {stock > 0 ? `in stock` : "Out of stock"}
                 </span>
               </div>
               <p className="text-green-600 text-2xl font-bold mt-2">
@@ -182,7 +199,7 @@ const ItemModel = ({
             </div>
 
             <p className="py-4 text-gray-500 text-sm leading-relaxed">
-              {description || "No description available."}
+              {description}
             </p>
           </div>
 
@@ -193,7 +210,7 @@ const ItemModel = ({
               <div className="grow flex items-center gap-2 p-1 rounded-full border border-gray-300">
                 <button
                   type="button"
-                  onClick={handleDec}
+                  onClick={decQuantity}
                   disabled={selectedQuantity <= 1 || stock <= 0}
                   className="grow w-8 h-8 flex items-center justify-center rounded-full text-lg font-bold bg-gray-100 hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
                 >
@@ -204,7 +221,7 @@ const ItemModel = ({
                 </span>
                 <button
                   type="button"
-                  onClick={handleInc}
+                  onClick={incQuantity}
                   disabled={selectedQuantity >= stock || stock <= 0}
                   className="grow w-8 h-8 flex items-center justify-center rounded-full text-lg font-bold bg-gray-100 hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
                 >
@@ -226,7 +243,9 @@ const ItemModel = ({
                 {/* Wishlist Button */}
                 <button
                   type="button"
-                  onClick={handleToggleWishList}
+                  onClick={
+                    isWish ? handleRemoveFromWishList : handleAddToWishList
+                  }
                   className="p-2.5 rounded-full text-green-700 bg-green-100 hover:bg-green-200 transition-colors cursor-pointer shrink-0"
                   aria-label="Toggle Wishlist"
                 >
@@ -240,14 +259,10 @@ const ItemModel = ({
             </div>
 
             {/* Category Meta */}
-            {category_name && (
-              <div className="pt-4 flex gap-2 text-sm">
-                <span className="font-semibold text-gray-700">Category:</span>
-                <span className="text-gray-500 capitalize">
-                  {category_name}
-                </span>
-              </div>
-            )}
+            <div className="pt-4 flex gap-2 text-sm">
+              <span className="font-semibold text-gray-700">Category:</span>
+              <span className="text-gray-500 capitalize">{category_name}</span>
+            </div>
           </div>
         </div>
       </div>

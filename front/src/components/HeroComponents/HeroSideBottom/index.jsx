@@ -1,4 +1,6 @@
 import { Link } from "react-router";
+
+// icons
 import { FaArrowRight } from "react-icons/fa6";
 
 // images

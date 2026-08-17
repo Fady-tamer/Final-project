@@ -1,7 +1,5 @@
 import React from "react";
 import { Link, useNavigate } from "react-router";
-// If using react-router-dom, update import to:
-// import { Link, useNavigate } from "react-router-dom";
 
 // icons
 import { FaHome, FaArrowLeft } from "react-icons/fa";

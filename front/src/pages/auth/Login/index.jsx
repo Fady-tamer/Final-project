@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import toast from "react-hot-toast";
@@ -7,8 +7,10 @@ import axios from "axios";
 // icons
 import { FaEye, FaRegEyeSlash } from "react-icons/fa";
 
-// validation & context
+// validation
 import { validation } from "./validation";
+
+// context
 import { mainStore } from "../../../context/MainContext";
 
 const Login = () => {
@@ -16,13 +18,14 @@ const Login = () => {
     BASE_URL,
     cartEndPoint,
     wishListEndPoint,
+    token,
     saveToken,
-    setCart,
-    saveUserId,
+    saveUserData,
     saveCartId,
     saveCartItems,
     saveWishListId,
     saveWishListItems,
+    setIsInitialLoading,
   } = useContext(mainStore);
 
   const endPoint = "/api/auth/local";
@@ -67,30 +70,34 @@ const Login = () => {
   const submitHandler = async (values) => {
     try {
       const response = await axios.post(`${BASE_URL}${endPoint}`, values);
+
+      const userData = response.data?.user;
       const jwt = response.data?.jwt;
-      const userId = response.data?.user?.id;
 
       if (jwt) {
         saveToken(jwt);
-        saveUserId(userId);
+        saveUserData(userData);
       }
 
-      fetchCart(jwt, userId);
-      fetchWishList(jwt, userId);
+      fetchCart(jwt, userData.id);
+      fetchWishList(jwt, userData.id);
 
       toast.success("Login successful!", { duration: 2000 });
-      navigateTo("/");
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.message ||
-        error.message ||
-        "An unexpected error occurred.";
+      navigateTo("/", { replace: true });
+    } catch {
+      const errorMessage = "An error occurred";
       toast.error(errorMessage);
     }
   };
 
+  useEffect(() => {
+    if (token) {
+      return navigateTo("/");
+    }
+  });
+
   return (
-    <div className="grow py-12 flex flex-col justify-center items-center px-4">
+    <div className="grow min-h-[71dvh] flex flex-col justify-center items-center px-4">
       <div className="w-full max-w-md">
         <Formik
           initialValues={{ identifier: "", password: "" }}
@@ -155,7 +162,7 @@ const Login = () => {
               <span>Don't have an account?</span>
               <span>|</span>
               <Link
-                to="/register"
+                to="/auth/register"
                 className="text-green-600 hover:underline font-semibold"
               >
                 Register

@@ -1,6 +1,8 @@
 import { useContext, useState, useEffect } from "react";
 import { Link } from "react-router";
-import { mainStore } from "../../context/MainContext";
+
+// context
+import { mainStore } from "../../../context/MainContext";
 
 const Checkout = () => {
   const { cart } = useContext(mainStore);
@@ -10,9 +12,9 @@ const Checkout = () => {
 
   const isCartEmpty = !cart || cart.length === 0 ? true : false;
 
-  const subTotal = isCartEmpty 
-    ? 0 
-    : cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+  const subTotal = isCartEmpty
+    ? 0
+    : cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const finalTotal = subTotal + shippingPrice;
 
@@ -23,7 +25,7 @@ const Checkout = () => {
       {/* Subtotal */}
       <div className="flex justify-between items-center py-3 border-b border-gray-100">
         <span className="text-gray-500 text-sm">Subtotal:</span>
-        <span className="font-bold text-gray-900 text-sm">{subTotal}</span>
+        <span className="font-bold text-gray-900 text-sm">${subTotal}</span>
       </div>
 
       {/* Shipping */}
@@ -37,9 +39,7 @@ const Checkout = () => {
       {/* Total */}
       <div className="flex justify-between items-center py-4 mb-2">
         <span className="text-gray-600 text-base">Total:</span>
-        <span className="font-bold text-gray-900 text-lg">
-          {finalTotal}
-        </span>
+        <span className="font-bold text-gray-900 text-lg">${finalTotal}</span>
       </div>
 
       {/* Action Button */}

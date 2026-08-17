@@ -1,4 +1,6 @@
 import { Link } from "react-router";
+
+// icons
 import { FaArrowRight } from "react-icons/fa6";
 
 // images
@@ -7,7 +9,7 @@ import heroside from "../../../assets/hero-side1.jpg";
 const HeroSideTop = () => {
   return (
     <div
-      className="flex-1 p-6 md:p-8 flex flex-col justify-center gap-2 bg-cover bg-center bg-no-repeat rounded-2xl shadow-lg min-h-55 relative overflow-hidden"
+      className="grow p-6 md:p-8 flex flex-col justify-center gap-2 bg-cover bg-center bg-no-repeat rounded-2xl shadow-lg min-h-55 relative overflow-hidden"
       style={{
         backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.85), rgba(255,255,255,0.2)), url(${heroside})`,
       }}
