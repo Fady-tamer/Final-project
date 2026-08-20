@@ -2,7 +2,6 @@ import { Outlet } from "react-router";
 
 // components
 import Navbar from "../components/Navbar";
-import Newsletter from "../components/Newsletter";
 import Footer from "../components/Footer";
 
 const MainLayout = () => {
@@ -12,7 +11,6 @@ const MainLayout = () => {
       <div className="grow flex flex-col">
         <Outlet />
       </div>
-      <Newsletter />
       <Footer />
     </div>
   );

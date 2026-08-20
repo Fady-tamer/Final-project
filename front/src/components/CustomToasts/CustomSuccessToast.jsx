@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 
-export const showSuccessToast = (message) => {
+export const CustomSuccessToast = (message) => {
   toast.custom(
     (t) => (
       <AnimatePresence>

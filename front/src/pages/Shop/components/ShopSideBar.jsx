@@ -3,7 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 // context
-import { mainStore } from "../../context/MainContext";
+import { mainStore } from "../../../context/MainContext";
 
 const ShopSideBar = () => {
   const { categories, selectedCategory, setSelectedCategory } =

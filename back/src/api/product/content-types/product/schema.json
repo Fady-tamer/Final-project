@@ -38,10 +38,11 @@
       "required": true,
       "min": 0
     },
-    "category": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::categorie.categorie"
+    "sale": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 100
     }
   }
 }

@@ -29,10 +29,18 @@ const Navbar = () => {
   // fn
   const handelMobileMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+
+    setTimeout(() => {
+      setIsMenuOpen(!!false);
+    }, 4000);
   };
 
   const handelUserMenu = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
+
+    setTimeout(() => {
+      setIsUserMenuOpen(false);
+    }, 4000);
   };
 
   const cartCounter = cart.length;
@@ -87,14 +95,16 @@ const Navbar = () => {
 
               {/* user Menu Toggle */}
               <button
-                onClick={handelUserMenu}
+                onClick={() => {
+                  handelUserMenu();
+                }}
                 className="flex items-center gap-1 text-gray-700 hover:text-green-500 transition-colors cursor-pointer"
               >
                 <GoPerson className="text-2xl" />
               </button>
 
               <AnimatePresence>
-                {isUserMenuOpen && <UserMenu handelUserMenu={handelUserMenu}/>}
+                {isUserMenuOpen && <UserMenu handelUserMenu={handelUserMenu} />}
               </AnimatePresence>
             </>
           ) : (

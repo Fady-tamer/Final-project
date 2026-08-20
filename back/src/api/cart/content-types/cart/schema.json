@@ -15,10 +15,11 @@
       "type": "json",
       "required": true
     },
-    "user_id": {
-      "type": "integer",
-      "required": true,
-      "unique": true
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "cart"
     }
   }
 }

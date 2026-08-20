@@ -1,26 +1,26 @@
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
-import toast from "react-hot-toast";
+
+// custom toasts
+import { CustomErrorToast } from "../components/CustomToasts/CustomErrorToast";
 
 export const mainStore = createContext();
 
 const MainContext = ({ children }) => {
   const BASE_URL = "http://localhost:1337";
+  const END_POINT = "/api/users/me";
 
   // end points
   const categoriesEndPoint = "/api/categories";
   const productsEndPoint = "/api/products";
   const cartEndPoint = "/api/carts";
   const wishListEndPoint = "/api/wishlists";
+  const orderEndPoint = "/api/orders";
 
   // user data
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [userData, setUserData] = useState(
     JSON.parse(localStorage.getItem("userData")) || null,
-  );
-  const [cartId, setCartId] = useState(localStorage.getItem("cartId") || null);
-  const [wishListId, setWishListId] = useState(
-    localStorage.getItem("wishListId") || null,
   );
   const [cart, setCart] = useState(
     JSON.parse(localStorage.getItem("cartItems")) || [],
@@ -45,7 +45,7 @@ const MainContext = ({ children }) => {
         const prodRes = await axios.get(`${BASE_URL}${productsEndPoint}`);
         setProducts(prodRes.data?.data || []);
       } catch (error) {
-        toast.error("Failed to preload initial data.");
+        CustomErrorToast("Failed to preload initial data.");
       }
     };
 
@@ -56,6 +56,10 @@ const MainContext = ({ children }) => {
     !selectedCategory || selectedCategory === "all"
       ? products
       : products.filter((item) => item.category_name === selectedCategory);
+
+  const saleProducts = products.filter((product) => {
+    return product.sale > 0;
+  });
 
   const saveToken = (jwt) => {
     localStorage.setItem("token", jwt);
@@ -68,18 +72,18 @@ const MainContext = ({ children }) => {
   };
 
   const saveCartId = (cartId) => {
-    localStorage.setItem("cartId", cartId);
-    setCartId(cartId);
-  };
-
-  const saveWishListId = (wishListId) => {
-    localStorage.setItem("wishListId", wishListId);
-    setWishListId(wishListId);
+    localStorage.setItem("cartId", JSON.stringify(cartId));
+    setCart(cartId);
   };
 
   const saveCartItems = (cartItems) => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
     setCart(cartItems);
+  };
+
+  const saveWishListId = (WishListId) => {
+    localStorage.setItem("wishListId", JSON.stringify(WishListId));
+    setWishList(WishListId);
   };
 
   const saveWishListItems = (WishListItems) => {
@@ -91,25 +95,26 @@ const MainContext = ({ children }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("userData");
     localStorage.removeItem("cartId");
-    localStorage.removeItem("wishListId");
     localStorage.removeItem("cartItems");
+    localStorage.removeItem("wishListId");
     localStorage.removeItem("wishListItems");
     setToken(null);
   };
 
   const contextValue = {
     BASE_URL,
+    END_POINT,
     categoriesEndPoint,
     productsEndPoint,
     cartEndPoint,
     wishListEndPoint,
+    orderEndPoint,
     token,
     userData,
-    cartId,
-    wishListId,
     selectedCategory,
     categories,
     filteredProducts,
+    saleProducts,
     isInitialLoading,
     cart,
     wishList,
@@ -118,8 +123,8 @@ const MainContext = ({ children }) => {
     saveToken,
     saveUserData,
     saveCartId,
-    saveWishListId,
     saveCartItems,
+    saveWishListId,
     saveWishListItems,
     logoutFn,
   };

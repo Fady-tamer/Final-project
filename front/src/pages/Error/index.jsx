@@ -8,7 +8,7 @@ const ErrorPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="grow py-12 flex items-center justify-center min-h-[70vh]">
+    <div className="grow py-12 flex items-center justify-center min-h-[56dvh]">
       <div className="container max-w-2xl mx-auto px-4 text-center flex flex-col items-center">
         {/* Visual 404 Badge / Text */}
         <div className="relative mb-6">

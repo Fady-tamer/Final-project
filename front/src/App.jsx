@@ -4,7 +4,6 @@ import { Toaster } from "react-hot-toast";
 
 // layouts
 import MainLayout from "./layouts/mainLayout";
-import AuthLayout from "./layouts/AuthLayout";
 
 // components
 import Home from "./pages/Home";
@@ -36,11 +35,11 @@ const App = () => {
             <Route path="shop" element={<Shop />} />
 
             <Route path="*" element={<ErrorPage />} />
-          </Route>
 
-          <Route path="auth" element={<AuthLayout />}>
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
+            <Route path="auth">
+              <Route path="login" element={<Login />} />
+              <Route path="register" element={<Register />} />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>

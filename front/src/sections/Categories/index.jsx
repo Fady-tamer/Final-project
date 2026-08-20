@@ -5,7 +5,7 @@ import { Link } from "react-router";
 import { FaArrowRightLong } from "react-icons/fa6";
 
 // components
-import CategoryItem from "../../components/Category";
+import CategoryCard from "../../components/Cards/CategoryCard";
 
 // context
 import { mainStore } from "../../context/MainContext";
@@ -14,9 +14,9 @@ const Categories = () => {
   const { categories } = useContext(mainStore);
 
   return (
-    <div className="py-4">
+    <div className="pb-4">
       {/* Header */}
-      <div className="mb-4 p-4 flex justify-between items-center">
+      <div className="mb-4 p-4 flex justify-between items-center rounded-2xl bg-white">
         <p className="text-3xl font-bold">Categories</p>
 
         <Link
@@ -30,9 +30,9 @@ const Categories = () => {
 
       {/* categories */}
       {
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="pb-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {categories.map(({ documentId, name, imgUrl }) => (
-            <CategoryItem
+            <CategoryCard
               key={documentId}
               documentId={documentId}
               name={name}
@@ -41,6 +41,8 @@ const Categories = () => {
           ))}
         </div>
       }
+
+      <div className="my-4 border-2 border-green-500 rounded-2xl" />
     </div>
   );
 };

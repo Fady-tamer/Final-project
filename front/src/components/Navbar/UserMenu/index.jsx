@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 // animation
 import { motion } from "framer-motion";
@@ -26,6 +26,9 @@ const menuVariants = {
 
 const UserMenu = ({ handelUserMenu }) => {
   const { logoutFn } = useContext(mainStore);
+
+  // navigators
+  const navigateTo = useNavigate();
 
   return (
     <motion.div
@@ -57,7 +60,10 @@ const UserMenu = ({ handelUserMenu }) => {
 
       <button
         type="button"
-        onClick={logoutFn}
+        onClick={() => {
+          logoutFn();
+          navigateTo("/");
+        }}
         className="w-full px-4 py-2 flex items-center gap-3 rounded-xl text-white bg-red-500 hover:bg-red-600 transition-colors cursor-pointer"
       >
         <IoExitOutline className="text-xl" />

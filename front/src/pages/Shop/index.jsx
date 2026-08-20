@@ -1,21 +1,18 @@
-import { useContext, useEffect, useState } from "react";
-import axios from "axios";
-import toast from "react-hot-toast";
+import { useContext } from "react";
 import { Link } from "react-router";
 
 // components
-import ShopSideBar from "../../components/SideShopBar";
-import Loading from "../../components/Loading";
-import Item from "../../components/Item";
+import ShopSideBar from "./components/ShopSideBar";
+import ProductCard from "../../components/Cards/ProductCard";
 
 // context
 import { mainStore } from "../../context/MainContext";
 
 const Shop = () => {
-  const { token, selectedCategory, filteredProducts } = useContext(mainStore);
+  const { token, filteredProducts } = useContext(mainStore);
 
   return (
-    <div className="grow min-h-[75dvh] px-4 lg:px-0 py-4 flex">
+    <div className="grow min-h-[56dvh] px-4 lg:px-0 py-4 flex">
       <div className="grow container mx-auto flex flex-col md:flex-row gap-6">
         {token ? (
           <>
@@ -28,30 +25,9 @@ const Shop = () => {
               {filteredProducts.length > 0 ? (
                 // products
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {filteredProducts.map(
-                    ({
-                      id,
-                      imgUrl,
-                      name,
-                      description,
-                      price,
-                      stock,
-                      category_name,
-                    }) => {
-                      return (
-                        <Item
-                          key={id}
-                          id={id}
-                          imgUrl={imgUrl}
-                          name={name}
-                          description={description}
-                          price={price}
-                          stock={stock}
-                          category_name={category_name}
-                        />
-                      );
-                    },
-                  )}
+                  {filteredProducts.map((product) => {
+                    return <ProductCard key={product.id} product={product} />;
+                  })}
                 </div>
               ) : (
                 <div className="h-64 flex flex-col justify-center items-center gap-2 text-gray-500">

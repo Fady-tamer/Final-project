@@ -6,18 +6,13 @@ import axios from "axios";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 
 // context
-import { mainStore } from "../../../context/MainContext";
+import { mainStore } from "../../context/MainContext";
 
-const ItemModel = ({
-  id,
-  imgUrl,
-  name,
-  description,
-  price,
-  stock,
-  category_name,
-  setOpenModel,
-}) => {
+// Custom Toasts
+import { CustomSuccessToast } from "../CustomToasts/CustomSuccessToast";
+import { CustomErrorToast } from "../CustomToasts/CustomErrorToast";
+
+const ProductModel = ({ product, setOpenModel }) => {
   const {
     BASE_URL,
     cartEndPoint,
@@ -33,20 +28,20 @@ const ItemModel = ({
   const [isWish, setIsWish] = useState(false);
 
   useEffect(() => {
-    const existingCartItem = cart.find((item) => item.id === id);
+    const existingCartItem = cart.find((item) => item.id === product.id);
     if (existingCartItem) {
       setSelectedQuantity(existingCartItem.quantity);
     } else {
       setSelectedQuantity(1);
     }
 
-    const inWishlist = wishList?.some((item) => item.id === id);
+    const inWishlist = wishList?.some((item) => item.id === product.id);
     setIsWish(inWishlist);
-  }, [cart, wishList, id]);
+  }, [cart, wishList, product]);
 
   const handleAddToCart = async () => {
     try {
-      const existIndex = cart.findIndex((item) => item.id === id);
+      const existIndex = cart.findIndex((item) => item.id === product.id);
 
       let updatedCart = [...cart];
 
@@ -56,15 +51,11 @@ const ItemModel = ({
           quantity: selectedQuantity,
         };
       } else {
-        const product = {
-          id,
-          imgUrl,
-          name,
-          price,
-          category_name,
+        const newCartItem = {
+          ...product,
           quantity: selectedQuantity,
         };
-        updatedCart.push(product);
+        updatedCart = [...updatedCart, newCartItem];
       }
 
       const cartId = localStorage.getItem("cartId");
@@ -76,10 +67,11 @@ const ItemModel = ({
         { data: { items: updatedCart } },
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      toast.success(`${name} updated in cart!`);
+
+      CustomSuccessToast(`${name} updated in cart!`);
       setOpenModel(false);
-    } catch (error) {
-      toast.error("Failed to update cart");
+    } catch {
+      CustomErrorToast("Failed to update cart");
     }
   };
 
@@ -91,15 +83,6 @@ const ItemModel = ({
     try {
       let updatedWishList;
 
-      const product = {
-        id,
-        imgUrl,
-        name,
-        description,
-        price,
-        category_name,
-        stock,
-      };
       updatedWishList = [...wishList, product];
 
       saveWishListItems(updatedWishList);
@@ -111,9 +94,10 @@ const ItemModel = ({
       );
 
       setIsWish(!isWish);
-      toast.success(`${name} added to wishlist!`);
-    } catch (error) {
-      toast.error("Failed to add to wishlist");
+
+      CustomSuccessToast(`${name} added to wishlist!`);
+    } catch {
+      CustomSuccessToast("Failed to add to wishlist");
     }
   };
 
@@ -125,7 +109,7 @@ const ItemModel = ({
     try {
       let updatedWishList;
 
-      updatedWishList = wishList.filter((item) => item.id !== id);
+      updatedWishList = wishList.filter((item) => item.id !== product.id);
 
       saveWishListItems(updatedWishList);
       await axios.put(
@@ -134,9 +118,9 @@ const ItemModel = ({
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
-      toast.success(`${name} removed from wishlist!`);
-    } catch (error) {
-      toast.error("Failed to remove from wishlist");
+      CustomSuccessToast(`${name} removed from wishlist!`);
+    } catch {
+      CustomErrorToast("Failed to remove from wishlist");
     }
   };
 
@@ -169,8 +153,8 @@ const ItemModel = ({
         {/* Product Image */}
         <div className="w-full md:w-1/2 max-h-96 rounded-2xl overflow-hidden bg-gray-100 shrink-0">
           <img
-            src={imgUrl}
-            alt={name}
+            src={product.imgUrl}
+            alt={product.name}
             className="w-full h-full object-cover object-center"
           />
         </div>
@@ -181,25 +165,47 @@ const ItemModel = ({
             <div className="pb-4 border-b border-gray-200">
               <div className="flex items-center gap-4">
                 <h3 className="text-2xl sm:text-3xl font-bold text-gray-800">
-                  {name}
+                  {product.name}
                 </h3>
                 <span
                   className={`px-3 py-1 text-xs font-bold rounded-xl whitespace-nowrap ${
-                    stock > 0
+                    product.stock > 0
                       ? "text-green-800 bg-green-100"
                       : "text-red-800 bg-red-100"
                   }`}
                 >
-                  {stock > 0 ? `in stock` : "Out of stock"}
+                  {product.stock > 0 ? `in stock` : "Out of stock"}
                 </span>
               </div>
-              <p className="text-green-600 text-2xl font-bold mt-2">
-                ${price ? Number(price).toFixed(2) : "0.00"}
-              </p>
+
+              {product.sale > 0 ? (
+                <div className="mt-4 flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <p className="font-bold text-gray-500 line-through">
+                      ${product.price}
+                    </p>
+                    <p className="font-bold text-green-500">
+                      $
+                      {Number(
+                        product.price - product.price * (product.sale / 100),
+                      ).toFixed(2)}
+                    </p>
+                  </div>
+                  <div className="px-2 py-1 rounded bg-red-500">
+                    <p className="text-white font-semibold">
+                      {product.sale}% OFF
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <p className="mt-4 font-bold text-green-500">
+                  ${product.price ? Number(product.price).toFixed(2) : "0.00"}
+                </p>
+              )}
             </div>
 
             <p className="py-4 text-gray-500 text-sm leading-relaxed">
-              {description}
+              {product.description}
             </p>
           </div>
 
@@ -211,7 +217,7 @@ const ItemModel = ({
                 <button
                   type="button"
                   onClick={decQuantity}
-                  disabled={selectedQuantity <= 1 || stock <= 0}
+                  disabled={selectedQuantity <= 1 || product.stock <= 0}
                   className="grow w-8 h-8 flex items-center justify-center rounded-full text-lg font-bold bg-gray-100 hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
                 >
                   -
@@ -222,7 +228,9 @@ const ItemModel = ({
                 <button
                   type="button"
                   onClick={incQuantity}
-                  disabled={selectedQuantity >= stock || stock <= 0}
+                  disabled={
+                    selectedQuantity >= product.stock || product.stock <= 0
+                  }
                   className="grow w-8 h-8 flex items-center justify-center rounded-full text-lg font-bold bg-gray-100 hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
                 >
                   +
@@ -234,10 +242,10 @@ const ItemModel = ({
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  disabled={stock <= 0}
+                  disabled={product.stock <= 0}
                   className="grow py-2.5 px-6 rounded-full text-white font-bold bg-green-500 hover:bg-green-600 active:scale-95 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all cursor-pointer shadow-md text-sm"
                 >
-                  {stock > 0 ? "Add To Cart" : "Out of Stock"}
+                  {product.stock > 0 ? "Add To Cart" : "Out of Stock"}
                 </button>
 
                 {/* Wishlist Button */}
@@ -261,7 +269,9 @@ const ItemModel = ({
             {/* Category Meta */}
             <div className="pt-4 flex gap-2 text-sm">
               <span className="font-semibold text-gray-700">Category:</span>
-              <span className="text-gray-500 capitalize">{category_name}</span>
+              <span className="text-gray-500 capitalize">
+                {product.category_name}
+              </span>
             </div>
           </div>
         </div>
@@ -270,4 +280,4 @@ const ItemModel = ({
   );
 };
 
-export default ItemModel;
+export default ProductModel;

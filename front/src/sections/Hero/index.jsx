@@ -1,12 +1,12 @@
 // components
-import HeroMain from "../../components/HeroComponents/HeroMain";
-import HeroSideTop from "../../components/HeroComponents/HeroSideTop";
-import HeroSideBottom from "../../components/HeroComponents/HeroSideBottom";
-import HeroBottom from "../../components/HeroComponents/HeroBottom";
+import HeroMain from "./components/HeroMain";
+import HeroSideTop from "./components/HeroSideTop";
+import HeroSideBottom from "./components/HeroSideBottom";
+import HeroBottom from "./components/HeroBottom";
 
 const Hero = () => {
   return (
-    <section className="flex flex-col gap-6 py-4">
+    <section className="flex flex-col gap-6 pb-4">
       <div className="flex flex-col lg:flex-row gap-6 min-h-125">
         {/* Main Banner*/}
         <div className="w-full lg:w-8/12">
@@ -22,6 +22,8 @@ const Hero = () => {
 
       {/* Features Bar */}
       <HeroBottom />
+
+      <div className="my-4 border-2 border-green-500 rounded-2xl" />
     </section>
   );
 };

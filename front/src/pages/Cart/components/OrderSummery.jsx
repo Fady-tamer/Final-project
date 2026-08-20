@@ -4,7 +4,7 @@ import { Link } from "react-router";
 // context
 import { mainStore } from "../../../context/MainContext";
 
-const Checkout = () => {
+const OrderSummery = () => {
   const { cart } = useContext(mainStore);
 
   const [SubTotal, setSubTotal] = useState(0);
@@ -63,4 +63,4 @@ const Checkout = () => {
   );
 };
 
-export default Checkout;
+export default OrderSummery;

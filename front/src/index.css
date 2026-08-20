@@ -15,6 +15,10 @@
     background-color: oklch(72.3% 0.219 149.579);
 }
 
+body{
+    background-color: #eee;
+}
+
 .container{
     @apply mx-auto
 }
